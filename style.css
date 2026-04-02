@@ -23,17 +23,17 @@
 .radio-buttons-scroll::-webkit-scrollbar-thumb:hover { background: #555; }
 
 .custom-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 14px;
-    width: 14px;
-    border-radius: 50%;
-    background: #ec4899;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
-    transition: transform 0.1s;
+  -webkit-appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: #ec4899;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+  transition: transform 0.1s;
 }
 .custom-range::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
+  transform: scale(1.2);
 }
 
 @keyframes spin-slow { 100% { transform: rotate(360deg); } }
