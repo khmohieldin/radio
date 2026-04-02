@@ -1,3 +1,4 @@
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, onSnapshot, updateDoc, increment, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -434,83 +435,6 @@ window.fetchLinkInfo = async function(url) {
     return [];
 };
 
-// ============================================
-// وظيفة تحديد وقص مقطع الهوية (20 ثانية فقط)
-// ============================================
-window.openIntroTrimmerModal = function(track, onConfirm) {
-    if(!modalContent) return;
-    modalContent.innerHTML = `
-        <div class="flex items-center justify-between mb-4 border-b border-[#333] pb-3">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                <i data-lucide="scissors" class="w-5 h-5 text-orange-400"></i>
-                قص مقطع الهوية (20 ثانية فقط)
-            </h3>
-        </div>
-        <div class="text-center mb-6">
-            <p class="text-sm text-gray-400 mb-4">اسحب النقطة لاختيار بداية المقطع. سيتم تشغيل 20 ثانية فقط.</p>
-            <div class="text-3xl font-mono text-cyan-400 mb-3 font-bold" id="trim-time-display">0:00</div>
-            <div class="flex items-center gap-3">
-                <span class="text-xs text-gray-500 font-mono">البداية</span>
-                <input type="range" id="trim-slider" min="0" max="100" value="0" class="flex-1 h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer custom-range" disabled>
-                <span class="text-xs text-gray-500 font-mono" id="trim-max-display">--:--</span>
-            </div>
-            <p id="trim-loading-text" class="text-xs text-orange-400 mt-4 animate-pulse font-medium">جاري تحميل المقطع لمعرفة المدة...</p>
-        </div>
-        <div class="flex justify-end gap-3 mt-auto">
-            <button onclick="closeModal()" class="px-5 py-2.5 rounded-lg text-gray-400 hover:bg-[#222] hover:text-white transition-colors">إلغاء</button>
-            <button id="modal-confirm-trim-btn" class="px-5 py-2.5 rounded-lg bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-medium transition-all shadow-lg shadow-orange-500/20" disabled>حفظ المقطع</button>
-        </div>
-    `;
-    if(modalOverlay) modalOverlay.classList.remove('hidden');
-    lucide.createIcons({ root: modalContent });
-
-    const slider = document.getElementById('trim-slider');
-    const display = document.getElementById('trim-time-display');
-    const maxDisplay = document.getElementById('trim-max-display');
-    const confirmBtn = document.getElementById('modal-confirm-trim-btn');
-    const loadingText = document.getElementById('trim-loading-text');
-
-    const tempAudio = new Audio();
-    tempAudio.crossOrigin = 'anonymous';
-    tempAudio.src = track.audioUrl;
-    
-    tempAudio.addEventListener('loadedmetadata', () => {
-        const dur = tempAudio.duration;
-        if(dur && !isNaN(dur) && dur > 0) {
-            const maxStart = dur > 20 ? dur - 20 : 0;
-            slider.max = maxStart;
-            slider.disabled = false;
-            confirmBtn.disabled = false;
-            maxDisplay.innerText = window.formatTime(maxStart);
-            loadingText.innerText = `المدة الكلية للمقطع: ${window.formatTime(dur)}`;
-            loadingText.classList.remove('animate-pulse', 'text-orange-400');
-            loadingText.classList.add('text-gray-500');
-        } else {
-            loadingText.innerText = 'المقطع قصير جداً أو تعذر معرفة مدته.';
-            confirmBtn.disabled = false;
-        }
-    });
-    tempAudio.addEventListener('error', () => {
-         loadingText.innerText = 'خطأ في التحميل، سيتم البدء من الصفر.';
-         loadingText.classList.remove('animate-pulse', 'text-orange-400');
-         loadingText.classList.add('text-red-400');
-         confirmBtn.disabled = false;
-    });
-    tempAudio.load();
-
-    slider.addEventListener('input', (e) => {
-        display.innerText = window.formatTime(parseFloat(e.target.value));
-    });
-
-    confirmBtn.addEventListener('click', () => {
-        const startT = parseFloat(slider.value) || 0;
-        tempAudio.pause();
-        tempAudio.removeAttribute('src');
-        onConfirm(startT);
-        window.closeModal();
-    });
-};
-
 window.setupIntroTrackPrompt = function() {
     window.openPromptModal('هوية الإذاعة (مقطع البداية)', 'ضع رابط التيك توك أو غيره هنا، أو اتركه فارغاً للحذف', async (url) => {
         if(!url || url.trim() === '') {
@@ -525,15 +449,10 @@ window.setupIntroTrackPrompt = function() {
             const tracks = await window.fetchLinkInfo(url.trim());
             if (tracks && tracks.length > 0) {
                 window.openPromptModal('تأكيد اسم تتر البداية:', 'أدخل الاسم', (finalTitle) => {
-                    const newIntro = tracks[0];
-                    newIntro.title = finalTitle || newIntro.title;
-                    
-                    window.openIntroTrimmerModal(newIntro, (startTime) => {
-                        newIntro.introStartTime = startTime;
-                        introTrack = newIntro;
-                        window.saveToDB();
-                        window.showToast('تم تعيين تتر البداية بنجاح! سيتم تشغيل 20 ثانية فقط.', 'success');
-                    });
+                    introTrack = tracks[0];
+                    introTrack.title = finalTitle || introTrack.title;
+                    window.saveToDB();
+                    window.showToast('تم تعيين تتر البداية بنجاح! سيتم تشغيله للزوار عند الدخول.', 'success');
                 }, tracks[0].title);
             }
         } catch (e) {
@@ -1321,7 +1240,7 @@ window.openAlertModal = function(title, message) {
 };
 
 // ==================
-// وظائف الأزرار السفلية (وحل مشكلة التثبيت الاحترافي)
+// وظائف الأزرار السفلية
 // ==================
 window.editAboutUs = function() {
     window.openTextareaModal('تعديل نص (من نحن):', 'اكتب معلومات عن الإذاعة...', (text) => {
@@ -1344,31 +1263,20 @@ window.addEventListener('beforeinstallprompt', (e) => {
     deferredPrompt = e;
 });
 
-// تثبيت احترافي يدعم جميع الهواتف الذكية (آيفون وأندرويد)
 window.installApp = async () => {
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    
-    if (isStandalone) {
+    if (window.matchMedia('(display-mode: standalone)').matches) {
         window.openAlertModal('تنبيه', 'التطبيق مثبت بالفعل على هاتفك! ابحث عن أيقونة "راديو خالد" في قائمة تطبيقاتك.');
         return;
     }
     
     if (deferredPrompt) {
-        // يدعم الأندرويد ومتصفح كروم
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') {
             deferredPrompt = null;
         }
     } else {
-        // فحص نوع الجهاز (آيفون أم أندرويد) لإعطاء التعليمات الصحيحة
-        const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
-        
-        if (isIos) {
-            window.openAlertModal('تثبيت التطبيق (آيفون/آيباد)', 'لتثبيت الراديو كتطبيق أساسي:<br><br>1. تأكد من فتح هذا الرابط من متصفح <b>Safari</b>، ثم اضغط على زر المشاركة <svg class="inline w-5 h-5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polygon><line x1="12" y1="2" x2="12" y2="15"></line></svg> في أسفل الشاشة.<br>2. اسحب للأعلى واختر <b>"إضافة إلى الصفحة الرئيسية"</b> (Add to Home Screen).<br>3. اضغط <b>"إضافة"</b> (Add) بالأعلى.');
-        } else {
-            window.openAlertModal('تثبيت التطبيق (أندرويد)', 'لتثبيت الراديو كتطبيق أساسي:<br><br>1. تأكد أنك تفتح الرابط من متصفح <b>Google Chrome</b> (لو فتحته من واتساب أو فيسبوك، اضغط على الثلاث نقاط واختر الفتح في كروم أولاً).<br>2. اضغط على خيارات المتصفح (الثلاث نقاط) بالأعلى.<br>3. اختر <b>"إضافة إلى الشاشة الرئيسية"</b> (Add to Home screen) أو <b>"تثبيت التطبيق"</b> (Install app).');
-        }
+        window.openAlertModal('تنزيل التطبيق', '💡 <b>ملاحظة هامة جداً:</b><br>إذا فتحت الرابط من تطبيق مثل (واتساب أو فيسبوك)، يرجى الضغط على الثلاث نقاط بالأعلى واختيار <b>(الفتح في متصفح كروم - Open in Chrome)</b> أولاً لتتمكن من التثبيت.<br><br><b>للتثبيت اليدوي:</b><br>1. اضغط على خيارات متصفح كروم (الثلاث نقاط).<br>2. اختر <b>"إضافة إلى الشاشة الرئيسية"</b> (Add to Home Screen) أو <b>"تثبيت التطبيق"</b> (Install App).<br>3. ستظهر الأيقونة بين برامجك فوراً!');
     }
 };
 
@@ -2645,15 +2553,14 @@ btnPlayPause?.addEventListener('click', () => {
 });
 
 btnRestart?.addEventListener('click', () => {
+    if(audio) audio.currentTime = 0;
     if (currentIndex === -3) {
-        if(audio) audio.currentTime = (introTrack && introTrack.introStartTime) ? introTrack.introStartTime : 0;
         if (!isPlaying) {
             window.initAudioBooster();
             window.safePlayAudio();
         }
         return;
     }
-    if(audio) audio.currentTime = 0;
     const currentGroup = window.getPlayingGroup();
     if (currentGroup && currentGroup.tracks[currentIndex]) {
         localStorage.setItem('trackProgress_' + currentGroup.tracks[currentIndex].id, 0);
@@ -2682,7 +2589,7 @@ btnNext?.addEventListener('click', () => {
 
 btnPrev?.addEventListener('click', () => {
     if (currentIndex === -3) {
-        if(audio) audio.currentTime = (introTrack && introTrack.introStartTime) ? introTrack.introStartTime : 0;
+        if(audio) audio.currentTime = 0;
         return;
     }
     const currentGroup = window.getPlayingGroup();
@@ -2779,14 +2686,7 @@ if (audio) {
         
         if(durationTxt) durationTxt.innerText = window.formatTime(audio.duration);
         
-        if (currentIndex === -3) {
-            if (introTrack && introTrack.introStartTime) {
-                audio.currentTime = introTrack.introStartTime;
-            } else {
-                audio.currentTime = 0;
-            }
-            return; 
-        }
+        if (currentIndex === -3) return; 
         
         const currentGroup = window.getPlayingGroup();
         if (pendingRestoreTime && currentGroup && currentGroup.tracks[currentIndex]) {
@@ -2812,28 +2712,12 @@ if (audio) {
             return;
         }
         
-        if (currentIndex === -3) {
-            const startT = (introTrack && introTrack.introStartTime) ? introTrack.introStartTime : 0;
-            
-            if (!isDraggingProgress) {
-                if(currentTimeTxt) currentTimeTxt.innerText = window.formatTime(Math.max(0, current - startT));
-                if(progressBar) progressBar.style.width = `${Math.min(100, ((current - startT) / 20) * 100)}%`;
-            }
-
-            if (current >= startT + 20) {
-                if(audio) { audio.pause(); audio.removeAttribute('src'); }
-                currentIndex = -1;
-                playingGroupId = null;
-                isPlaying = false;
-                window.updatePlayerUI();
-            }
-            return; 
-        }
-        
         if (!isDraggingProgress) {
             if(currentTimeTxt) currentTimeTxt.innerText = window.formatTime(current);
             if(progressBar) progressBar.style.width = duration ? `${(current / duration) * 100}%` : '0%';
         }
+        
+        if (currentIndex === -3) return; 
 
         const currentGroup = window.getPlayingGroup();
         if (currentGroup && currentGroup.tracks[currentIndex] && duration > 0) {
@@ -2848,14 +2732,6 @@ window.updateProgressFromEvent = function(e) {
     const x = e.clientX - rect.left;
     const percentage = Math.max(0, Math.min(1, x / rect.width));
     
-    if (currentIndex === -3) {
-        const startT = (introTrack && introTrack.introStartTime) ? introTrack.introStartTime : 0;
-        audio.currentTime = startT + (percentage * 20);
-        if(progressBar) progressBar.style.width = `${percentage * 100}%`;
-        if(currentTimeTxt) currentTimeTxt.innerText = window.formatTime(percentage * 20);
-        return;
-    }
-
     audio.currentTime = percentage * audio.duration;
     if(progressBar) progressBar.style.width = `${percentage * 100}%`;
     if(currentTimeTxt) currentTimeTxt.innerText = window.formatTime(audio.currentTime);
