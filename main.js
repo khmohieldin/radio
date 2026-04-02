@@ -2844,4 +2844,3 @@ if (downloadBtnEl) {
 }
 
 window.applyAdminMode();
-
