@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>راديو خالد</title>
     
-    <!-- SEO & Social Media Meta Tags -->
+    <!-- SEO & Social Media Meta Tags (Open Graph) -->
     <meta name="description" content="راديو خالد - رحلة الى الزمن الجميل. استمع لأجمل المسلسلات والمقاطع الإذاعية.">
     <meta property="og:title" content="راديو خالد">
     <meta property="og:description" content="رحلة الى الزمن الجميل - استمع لأجمل المسلسلات والمقاطع الإذاعية">
@@ -13,7 +13,7 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
 
-    <!-- PWA Settings -->
+    <!-- إعدادات PWA لتثبيت التطبيق بايقونة أصلية -->
     <meta name="theme-color" content="#ec4899">
     <link rel="apple-touch-icon" href="[https://i.ibb.co/sp6xBm7K/Picsart-26-03-30-18-16-08-102.png](https://i.ibb.co/sp6xBm7K/Picsart-26-03-30-18-16-08-102.png)">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,22 +22,28 @@
     <link rel="manifest" href="manifest.json">
     
     <script>
+        // تفعيل Service Worker الحقيقي للتطبيق بطريقة احترافية وآمنة
         if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
             window.addEventListener('load', () => {
+                // استخدام المسار الجذري لضمان عمل الـ SW على كل الصفحات
                 navigator.serviceWorker.register('/sw.js')
                     .then(reg => console.log('تم تفعيل خدمة التطبيق (PWA) بنجاح', reg.scope))
                     .catch(err => console.warn('لم يتم العثور على ملف sw.js أو حدث خطأ:', err));
             });
+        } else {
+            console.log('ميزة Service Worker تحتاج إلى اتصال آمن (HTTPS) أو بيئة تطوير محلي (localhost).');
         }
     </script>
 
-    <!-- Libraries -->
+    <!-- تضمين مكتبة Tailwind CSS -->
     <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <!-- تضمين مكتبة أيقونات Lucide -->
     <script src="[https://unpkg.com/lucide@latest](https://unpkg.com/lucide@latest)"></script>
+    <!-- مكتبة HLS.js لتشغيل ملفات m3u8 -->
     <script src="[https://cdn.jsdelivr.net/npm/hls.js@latest](https://cdn.jsdelivr.net/npm/hls.js@latest)"></script>
     
-    <!-- ربط ملف التصميم الخارجي -->
-    <link rel="stylesheet" href="./style.css">
+    <!-- ربط ملف التنسيقات الخارجي -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="min-h-screen bg-[#111111] text-gray-100 font-sans selection:bg-pink-500/30 flex flex-col">
 
@@ -359,7 +365,7 @@
 
     </div>
 
-    <!-- ربط ملف الجافاسكريبت المرفق (تأكد من وجود main.js في نفس المجلد) -->
-    <script type="module" src="./main.js"></script>
+    <!-- ربط ملف الجافاسكريبت هنا بدلاً من الكود المباشر -->
+    <script type="module" src="main.js"></script>
 </body>
 </html>
