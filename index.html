@@ -184,6 +184,10 @@
                     <i data-lucide="newspaper" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                     <span class="text-xs sm:text-sm">راديو الأخبار</span>
                 </button>
+                <button onclick="playMonteCarloRadio()" class="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white rounded-xl transition-all font-bold shadow-lg shadow-orange-500/20 border border-orange-400/30 shrink-0 whitespace-nowrap">
+                    <i data-lucide="globe" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                    <span class="text-xs sm:text-sm">مونت كارلو</span>
+                </button>
             </div>
         </header>
 
@@ -744,6 +748,20 @@
             window.updatePlayerUI();
         };
 
+        window.playMonteCarloRadio = () => {
+            playingGroupId = null;
+            currentIndex = -6; // Unique index for Monte Carlo Radio
+            localStorage.setItem('lastTrackIndex', -6);
+            localStorage.removeItem('lastPlayingGroupId');
+
+            window.safeChangeTrack('https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3');
+            pendingRestoreTime = false;
+            window.initAudioBooster();
+
+            window.safePlayAudio();
+            window.updatePlayerUI();
+        };
+
         window.fetchLinkInfo = async function(url) {
             const isTikTok = url.includes('tiktok.com');
             const isArchive = url.includes('archive.org/details/');
@@ -1138,7 +1156,7 @@
             });
 
             audio.addEventListener('waiting', () => {
-                if (currentIndex !== -2 && currentIndex !== -4 && currentIndex !== -5) {
+                if (currentIndex !== -2 && currentIndex !== -4 && currentIndex !== -5 && currentIndex !== -6) {
                     const titleEl = document.getElementById('track-title');
                     if (titleEl) titleEl.innerText = '⏳ جاري التحضير...';
                 }
@@ -2572,9 +2590,9 @@
             const currentPlayingGroup = window.getPlayingGroup();
             const playingTracks = currentPlayingGroup ? currentPlayingGroup.tracks : [];
             
-            if(btnPlayPause) btnPlayPause.disabled = (playingTracks.length === 0 && currentIndex === -1 && currentIndex !== -2 && currentIndex !== -3 && currentIndex !== -4 && currentIndex !== -5);
-            if(btnNext) btnNext.disabled = currentIndex === -2 || currentIndex === -3 || currentIndex === -4 || currentIndex === -5 || currentIndex >= playingTracks.length - 1 || playingTracks.length === 0;
-            if(btnPrev) btnPrev.disabled = currentIndex === -2 || currentIndex === -3 || currentIndex === -4 || currentIndex === -5 || currentIndex <= 0 || playingTracks.length === 0;
+            if(btnPlayPause) btnPlayPause.disabled = (playingTracks.length === 0 && currentIndex === -1 && currentIndex !== -2 && currentIndex !== -3 && currentIndex !== -4 && currentIndex !== -5 && currentIndex !== -6);
+            if(btnNext) btnNext.disabled = currentIndex === -2 || currentIndex === -3 || currentIndex === -4 || currentIndex === -5 || currentIndex === -6 || currentIndex >= playingTracks.length - 1 || playingTracks.length === 0;
+            if(btnPrev) btnPrev.disabled = currentIndex === -2 || currentIndex === -3 || currentIndex === -4 || currentIndex === -5 || currentIndex === -6 || currentIndex <= 0 || playingTracks.length === 0;
 
             let mediaTitle = 'راديو خالد';
             let mediaArtist = 'رحلة الى الزمن الجميل';
@@ -2630,6 +2648,27 @@
 
                 if(playingGroupBadge) {
                     playingGroupBadge.innerText = 'أخبار حية';
+                    playingGroupBadge.classList.remove('hidden');
+                }
+
+                if(trackCover) {
+                    trackCover.src = mediaArtwork; 
+                    trackCover.classList.remove('hidden');
+                }
+                if(defaultIcon) defaultIcon.classList.add('hidden');
+
+                if (downloadContainer) downloadContainer.classList.add('hidden');
+                if (btnRestart) btnRestart.classList.add('hidden');
+                if (trackDetailsContainer) trackDetailsContainer.classList.add('hidden');
+
+            } else if (currentIndex === -6) {
+                mediaTitle = 'مونت كارلو الدولية';
+                mediaArtist = 'بث مباشر 🔴';
+                if(trackTitle) trackTitle.innerText = mediaTitle;
+                if(trackAuthor) trackAuthor.innerText = mediaArtist;
+
+                if(playingGroupBadge) {
+                    playingGroupBadge.innerText = 'أخبار دولية';
                     playingGroupBadge.classList.remove('hidden');
                 }
 
@@ -2725,7 +2764,7 @@
             }
 
             if (isPlaying) {
-                if(coverContainer) {
+                if(coverContainer) {                                                
                     coverContainer.classList.add('border-pink-500', 'shadow-[0_0_30px_rgba(236,72,153,0.3)]', 'animate-spin-slow');
                     if (currentIndex === -2) {
                         coverContainer.classList.replace('border-pink-500', 'border-emerald-500');
@@ -2736,6 +2775,9 @@
                     } else if (currentIndex === -5) {
                         coverContainer.classList.replace('border-pink-500', 'border-blue-500');
                         coverContainer.classList.replace('shadow-[0_0_30px_rgba(236,72,153,0.3)]', 'shadow-[0_0_30px_rgba(59,130,246,0.3)]');
+                    } else if (currentIndex === -6) {
+                        coverContainer.classList.replace('border-pink-500', 'border-orange-500');
+                        coverContainer.classList.replace('shadow-[0_0_30px_rgba(236,72,153,0.3)]', 'shadow-[0_0_30px_rgba(249,115,22,0.3)]');
                     } else if (currentIndex === -3) {
                          coverContainer.classList.replace('border-pink-500', 'border-orange-500');
                          coverContainer.classList.replace('shadow-[0_0_30px_rgba(236,72,153,0.3)]', 'shadow-[0_0_30px_rgba(249,115,22,0.3)]');
@@ -2802,7 +2844,7 @@
             
             clearTimeout(audioLoadTimeout);
             audioLoadTimeout = setTimeout(() => {
-                if (audio && audio.paused && currentIndex !== -2 && currentIndex !== -3 && currentIndex !== -4 && currentIndex !== -5) {
+                if (audio && audio.paused && currentIndex !== -2 && currentIndex !== -3 && currentIndex !== -4 && currentIndex !== -5 && currentIndex !== -6) {
                     window.showToast('المقطع يستغرق وقتاً طويلاً. قد تكون هناك مشكلة بالرابط أو بالإنترنت. يرجى تحديث الصفحة.', 'error');
                     if(trackTitle) trackTitle.innerText = '⚠️ تأخر أو خطأ في التحميل';
                 }
@@ -3039,7 +3081,7 @@
         };
 
         btnPlayPause?.addEventListener('click', () => {
-            if (currentIndex === -2 || currentIndex === -3 || currentIndex === -4 || currentIndex === -5) {
+            if (currentIndex === -2 || currentIndex === -3 || currentIndex === -4 || currentIndex === -5 || currentIndex === -6) {
                 if (isPlaying) {
                     if(audio) audio.pause();
                 } else {
@@ -3135,7 +3177,7 @@
             audio.addEventListener('play', () => {
                 isPlaying = true;
                 
-                if (currentIndex !== -2 && currentIndex !== -3 && currentIndex !== -4 && currentIndex !== -5) {
+                if (currentIndex !== -2 && currentIndex !== -3 && currentIndex !== -4 && currentIndex !== -5 && currentIndex !== -6) {
                     const currentGroup = window.getPlayingGroup();
                     if (currentGroup && currentGroup.tracks[currentIndex] && !currentGroup.isLocal) {
                         const trackId = currentGroup.tracks[currentIndex].id;
@@ -3170,7 +3212,7 @@
             });
 
             audio.addEventListener('ended', () => {
-                if (currentIndex === -2 || currentIndex === -4 || currentIndex === -5) return; 
+                if (currentIndex === -2 || currentIndex === -4 || currentIndex === -5 || currentIndex === -6) return; 
                 
                 if (currentIndex === -3) {
                     if(audio) { audio.pause(); audio.removeAttribute('src'); }
@@ -3196,7 +3238,7 @@
             });
 
             audio.addEventListener('loadedmetadata', () => {
-                if (currentIndex === -2 || currentIndex === -4 || currentIndex === -5) {
+                if (currentIndex === -2 || currentIndex === -4 || currentIndex === -5 || currentIndex === -6) {
                     if(durationTxt) durationTxt.innerText = '🔴';
                     return;
                 }
@@ -3221,7 +3263,7 @@
                 const current = audio.currentTime;
                 const duration = audio.duration || 0;
                 
-                if (currentIndex === -2 || currentIndex === -4 || currentIndex === -5) {
+                if (currentIndex === -2 || currentIndex === -4 || currentIndex === -5 || currentIndex === -6) {
                     if (!isDraggingProgress) {
                         if(currentTimeTxt) currentTimeTxt.innerText = 'بث مباشر';
                         if(progressBar) progressBar.style.width = '100%';
@@ -3244,7 +3286,7 @@
         }
 
         window.updateProgressFromEvent = function(e) {
-            if (!audio || !audio.duration || !progressContainer || currentIndex === -2 || currentIndex === -4 || currentIndex === -5) return;
+            if (!audio || !audio.duration || !progressContainer || currentIndex === -2 || currentIndex === -4 || currentIndex === -5 || currentIndex === -6) return;
             const rect = progressContainer.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const percentage = Math.max(0, Math.min(1, x / rect.width));
@@ -3256,13 +3298,13 @@
 
         if (progressContainer) {
             progressContainer.addEventListener('mousedown', (e) => {
-                if(currentIndex === -2 || currentIndex === -4 || currentIndex === -5) return;
+                if(currentIndex === -2 || currentIndex === -4 || currentIndex === -5 || currentIndex === -6) return;
                 isDraggingProgress = true;
                 window.updateProgressFromEvent(e);
             });
 
             progressContainer.addEventListener('touchstart', (e) => {
-                if(currentIndex === -2 || currentIndex === -4 || currentIndex === -5) return;
+                if(currentIndex === -2 || currentIndex === -4 || currentIndex === -5 || currentIndex === -6) return;
                 isDraggingProgress = true;
                 window.updateProgressFromEvent(e.touches[0]);
             }, { passive: false });
