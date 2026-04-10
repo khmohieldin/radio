@@ -133,7 +133,7 @@
         <button onclick="playQuranRadio(); closeQuranMenu();" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-emerald-400 transition-colors text-right w-full font-medium">
             <i data-lucide="radio" class="w-4 h-4"></i> إذاعة القرآن الكريم
         </button>
-        <button onclick="window.open('https://khmohieldin.github.io/qoran/', '_blank'); closeQuranMenu();" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-amber-400 transition-colors text-right w-full border-t border-[#333] font-medium">
+        <button onclick="openInternalFrame('https://khmohieldin.github.io/qoran/', 'تلاوات نادرة');" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-amber-400 transition-colors text-right w-full border-t border-[#333] font-medium">
             <i data-lucide="headphones" class="w-4 h-4"></i> تلاوات نادرة
         </button>
     </div>
@@ -648,6 +648,30 @@
         
         document.addEventListener('click', closeMenuOutside);
         document.addEventListener('touchstart', closeMenuOutside, { passive: true });
+
+        window.openInternalFrame = function(url, title) {
+            if(!modalContent) return;
+            modalContent.innerHTML = `
+                <div class="flex items-center justify-between mb-4 border-b border-[#333] pb-3">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="headphones" class="w-5 h-5 text-amber-400"></i>
+                        ${title}
+                    </h3>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-white transition-colors bg-[#222] hover:bg-red-500 rounded-lg p-1">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="w-full h-[65vh] sm:h-[75vh] rounded-xl overflow-hidden bg-black relative">
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <i data-lucide="loader-2" class="w-8 h-8 text-cyan-500 animate-spin"></i>
+                    </div>
+                    <iframe src="${url}" class="w-full h-full border-none relative z-10" onload="this.previousElementSibling.style.display='none'"></iframe>
+                </div>
+            `;
+            if(modalOverlay) modalOverlay.classList.remove('hidden');
+            lucide.createIcons({ root: modalContent });
+            if(window.closeQuranMenu) window.closeQuranMenu();
+        };
 
         window.startIntro = () => {
             const introOverlay = document.getElementById('intro-overlay');
