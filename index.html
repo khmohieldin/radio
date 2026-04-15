@@ -105,9 +105,58 @@
         /* خصائص الظل للنصوص */
         .text-shadow { text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .text-shadow-sm { text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
+        /* ستايلات الراديو القديم (خشب، زجاج، أزرار نحاسية) */
+        .wood-panel {
+            background-color: #3e2723;
+            background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 2px, transparent 2px, transparent 4px), linear-gradient(to bottom, #5c3a21, #2c1810);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 15px 30px rgba(0,0,0,0.9);
+            border: 5px solid #1a0f0a;
+        }
+        .glass-hollow {
+            background: linear-gradient(135deg, rgba(10,5,0,0.9) 0%, rgba(30,15,5,0.95) 100%);
+            box-shadow: inset 0 8px 20px rgba(0,0,0,1), inset 0 1px 2px rgba(255,255,255,0.1), 0 2px 0 rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #0a0502;
+        }
+        .glass-hollow::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 45%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+            pointer-events: none;
+            border-radius: inherit;
+        }
+        .vintage-btn {
+            background: linear-gradient(to bottom, #e5c058, #a67c00);
+            border: 2px solid #3e2723;
+            box-shadow: inset 0 2px 2px rgba(255,255,255,0.6), 0 4px 0 #5c430a, 0 6px 10px rgba(0,0,0,0.7);
+            color: #2c1810 !important;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+            transition: all 0.1s ease;
+            font-weight: 900;
+        }
+        .vintage-btn:active {
+            transform: translateY(4px);
+            box-shadow: inset 0 2px 2px rgba(255,255,255,0.6), 0 0 0 #5c430a, 0 2px 4px rgba(0,0,0,0.7);
+        }
+        .vintage-shelf {
+            background: linear-gradient(to bottom, #4a2f1d, #2c1810);
+            border-bottom: 8px solid #1a0f0a;
+            border-top: 2px solid #734a2e;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.9);
+            padding: 12px 8px;
+            border-radius: 6px;
+        }
+        body {
+            background-color: #1a0f0a;
+            background-image: radial-gradient(circle at center, #2c1810 0%, #0a0502 100%);
+            font-family: 'Georgia', serif;
+        }
     </style>
 </head>
-<body class="min-h-screen bg-[#111111] text-gray-100 font-sans selection:bg-pink-500/30 flex flex-col">
+<body class="min-h-screen text-amber-50 selection:bg-amber-900/50 flex flex-col">
 
     <!-- شاشة الترحيب لتشغيل تتر البداية -->
     <div id="intro-overlay" class="fixed inset-0 bg-[#0a0a0a] bg-opacity-95 z-[100] hidden flex-col items-center justify-center backdrop-blur-md transition-opacity duration-500">
@@ -156,13 +205,13 @@
         
         <!-- الترويسة -->
         <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-gray-800 gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-400 to-pink-500 flex items-center justify-center shadow-[0_0_15px_rgba(236,72,153,0.3)] shrink-0">
-                    <i data-lucide="radio" class="w-6 h-6 text-white"></i>
+            <div class="flex items-center gap-4 glass-hollow px-4 py-3 rounded-2xl w-full sm:w-auto">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-700 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(255,255,255,0.5),0_0_15px_rgba(212,175,55,0.4)] shrink-0 border-2 border-[#2c1810]">
+                    <i data-lucide="radio" class="w-6 h-6 text-[#2c1810]"></i>
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-white to-pink-400">
+                        <h1 class="text-2xl font-bold text-amber-400 text-shadow" style="font-family: 'Courier New', Courier, monospace;">
                             راديو خالد
                         </h1>
                         <span id="admin-badge" class="hidden bg-pink-500/20 text-pink-400 text-xs px-2 py-0.5 rounded border border-pink-500/30 flex items-center gap-1 cursor-pointer hover:bg-pink-500/30 transition-colors" onclick="lockAdmin()" title="إغلاق غرفة التحكم">
@@ -181,31 +230,31 @@
             </div>
 
             <!-- أزرار الإذاعات المباشرة -->
-            <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto radio-buttons-scroll pb-2 sm:pb-0">
-                <button id="btn-quran-menu" onclick="toggleQuranMenu(event)" class="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl transition-all font-bold shadow-lg shadow-emerald-500/20 border border-emerald-400/30 shrink-0 whitespace-nowrap">
+            <div class="flex items-center gap-3 w-full sm:w-auto overflow-x-auto radio-buttons-scroll vintage-shelf pb-2 sm:pb-0">
+                <button id="btn-quran-menu" onclick="toggleQuranMenu(event)" class="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 vintage-btn rounded-md shrink-0 whitespace-nowrap">
                     <i data-lucide="book-open" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-                    <span class="text-xs sm:text-sm">القرآن الكريم</span>
+                    <span class="text-xs sm:text-sm font-bold">القرآن الكريم</span>
                     <i data-lucide="chevron-down" class="w-3 h-3 mr-1"></i>
                 </button>
-                <button onclick="playDramaMixRadio()" class="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white rounded-xl transition-all font-bold shadow-lg shadow-purple-500/20 border border-purple-400/30 shrink-0 whitespace-nowrap">
+                <button onclick="playDramaMixRadio()" class="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 vintage-btn rounded-md shrink-0 whitespace-nowrap">
                     <i data-lucide="clapperboard" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-                    <span class="text-xs sm:text-sm">دراما ميكس</span>
+                    <span class="text-xs sm:text-sm font-bold">دراما ميكس</span>
                 </button>
-                <button onclick="playNewsRadio()" class="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl transition-all font-bold shadow-lg shadow-blue-500/20 border border-blue-400/30 shrink-0 whitespace-nowrap">
+                <button onclick="playNewsRadio()" class="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 vintage-btn rounded-md shrink-0 whitespace-nowrap">
                     <i data-lucide="newspaper" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-                    <span class="text-xs sm:text-sm">راديو الأخبار</span>
+                    <span class="text-xs sm:text-sm font-bold">راديو الأخبار</span>
                 </button>
-                <button onclick="playMonteCarloRadio()" class="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white rounded-xl transition-all font-bold shadow-lg shadow-orange-500/20 border border-orange-400/30 shrink-0 whitespace-nowrap">
+                <button onclick="playMonteCarloRadio()" class="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 vintage-btn rounded-md shrink-0 whitespace-nowrap">
                     <i data-lucide="globe" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-                    <span class="text-xs sm:text-sm">مونت كارلو</span>
+                    <span class="text-xs sm:text-sm font-bold">مونت كارلو</span>
                 </button>
             </div>
         </header>
 
         <!-- شريط الإحصائيات المتحرك -->
-        <div id="ticker-container" class="w-full bg-[#151515] border border-[#333] rounded-xl overflow-hidden py-2.5 px-4 relative flex items-center shadow-md" dir="ltr">
+        <div id="ticker-container" class="w-full glass-hollow rounded-xl overflow-hidden py-2.5 px-4 relative flex items-center shadow-md" dir="ltr">
             <div class="w-full overflow-hidden whitespace-nowrap">
-                <div id="ticker-text" class="animate-scroll-ltr text-cyan-400 font-medium text-sm sm:text-base" dir="rtl" title="يمكنك إيقاف الشريط بتمرير الماوس عليه والضغط على أسماء المقاطع لتشغيلها">
+                <div id="ticker-text" class="animate-scroll-ltr text-amber-400 font-medium text-sm sm:text-base text-shadow" dir="rtl" title="يمكنك إيقاف الشريط بتمرير الماوس عليه والضغط على أسماء المقاطع لتشغيلها" style="font-family: 'Courier New', Courier, monospace;">
                     <!-- سيتم حقن الإحصائيات هنا -->
                 </div>
             </div>
@@ -215,7 +264,7 @@
             
             <!-- القسم الأيمن: المشغل والتحكم -->
             <div class="lg:col-span-5 space-y-6">
-                <div class="bg-[#1a1a1a] border border-[#333] rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+                <div class="wood-panel rounded-3xl p-6 shadow-2xl relative overflow-hidden">
                     
                     <div id="playing-glow" class="hidden">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-pink-500/20 blur-[50px] rounded-full pointer-events-none"></div>
@@ -231,13 +280,13 @@
                             <img id="track-cover" alt="Cover" loading="lazy" class="hidden w-full h-full object-cover opacity-60" onerror="this.onerror=null; this.removeAttribute('src'); this.classList.add('hidden'); document.getElementById('default-icon').classList.remove('hidden');" />
                         </div>
 
-                        <div class="w-full">
-                            <span id="playing-group-badge" class="hidden inline-block mb-2 px-2 py-0.5 rounded text-[10px] bg-pink-500/10 text-pink-400 border border-pink-500/20"></span>
-                            <h2 id="track-title" class="text-lg font-bold text-white px-2 max-h-24 overflow-y-auto custom-scrollbar text-shadow" title="لا يوجد مقطع">
+                        <div class="w-full glass-hollow p-4 rounded-xl">
+                            <span id="playing-group-badge" class="hidden inline-block mb-2 px-2 py-0.5 rounded text-[10px] bg-amber-900/40 text-amber-400 border border-amber-700/50"></span>
+                            <h2 id="track-title" class="text-xl font-bold text-amber-400 px-2 max-h-24 overflow-y-auto custom-scrollbar text-shadow" title="لا يوجد مقطع" style="font-family: 'Courier New', Courier, monospace;">
                                 محطة الراديو جاهزة
                             </h2>
-                            <div class="flex items-center justify-center gap-2 mt-2 text-sm text-gray-400">
-                                <i data-lucide="user" class="w-4 h-4 text-cyan-400"></i>
+                            <div class="flex items-center justify-center gap-2 mt-2 text-sm text-amber-200/70">
+                                <i data-lucide="mic" class="w-4 h-4 text-amber-500"></i>
                                 <span id="track-author">صاحب المقطع</span>
                             </div>
                         </div>
@@ -252,18 +301,18 @@
                                 </div>
                                 <span id="duration-txt">0:00</span>
                             </div>
-                            <div id="progress-container" class="w-full h-4 bg-gray-800 rounded-full overflow-hidden cursor-pointer relative group flex items-center">
-                                <div id="progress-bar" class="h-2.5 bg-gradient-to-r from-cyan-400 to-pink-500 transition-none ease-linear relative w-full rounded-full" style="width: 0%">
+                            <div id="progress-container" class="w-full h-4 bg-[#1a0f0a] border border-[#3e2723] rounded-full overflow-hidden cursor-pointer relative group flex items-center shadow-inner">
+                                <div id="progress-bar" class="h-2.5 bg-gradient-to-r from-amber-600 to-amber-400 transition-none ease-linear relative w-full rounded-full" style="width: 0%">
                                     <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity translate-x-1/2 cursor-grab active:cursor-grabbing pointer-events-none"></div>
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-3 mt-4 bg-[#0a0a0a] p-2.5 rounded-xl border border-[#333]">
-                                <button id="btn-mute" class="text-gray-400 hover:text-cyan-400 transition-colors">
+                            <div class="flex items-center gap-3 mt-4 glass-hollow p-2.5 rounded-xl">
+                                <button id="btn-mute" class="text-amber-500 hover:text-amber-300 transition-colors">
                                     <i id="volume-icon" data-lucide="volume-1" class="w-5 h-5"></i>
                                 </button>
-                                <input type="range" id="volume-slider" min="0" max="3" step="0.05" value="1" class="flex-1 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer custom-range" title="مستوى الصوت (يمكنك الرفع حتى 300%)" />
-                                <span id="volume-text" class="text-xs font-mono font-bold w-12 text-center py-1 rounded-md text-cyan-400 bg-cyan-500/10">100%</span>
+                                <input type="range" id="volume-slider" min="0" max="3" step="0.05" value="1" class="flex-1 h-1.5 bg-[#1a0f0a] border border-[#3e2723] rounded-lg appearance-none cursor-pointer custom-range" title="مستوى الصوت (يمكنك الرفع حتى 300%)" />
+                                <span id="volume-text" class="text-xs font-mono font-bold w-12 text-center py-1 rounded-md text-amber-400 bg-[#1a0f0a] border border-[#2c1810]">100%</span>
                             </div>
                         </div>
 
@@ -276,7 +325,7 @@
                                 <i data-lucide="skip-forward" class="w-7 h-7"></i>
                             </button>
 
-                            <button id="btn-play-pause" class="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] disabled:hover:scale-100 transition-colors" title="تشغيل / إيقاف">
+                            <button id="btn-play-pause" class="w-16 h-16 rounded-full vintage-btn flex items-center justify-center transition-all disabled:opacity-50" title="تشغيل / إيقاف">
                                 <svg id="svg-play" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
                             </button>
 
@@ -373,9 +422,9 @@
                     </div>
                 </div>
 
-                <div id="playlist-main-container" class="border border-[#333] rounded-2xl overflow-hidden flex flex-col h-[650px] transition-colors duration-500 shadow-xl" style="background-color: #111111;">
+                <div id="playlist-main-container" class="wood-panel rounded-2xl overflow-hidden flex flex-col h-[650px] transition-colors duration-500 shadow-xl">
                     
-                    <div class="p-4 bg-[#1a1d24] border-b border-[#333] flex flex-col sm:flex-row items-center justify-between gap-4 relative z-20">
+                    <div class="p-4 glass-hollow flex flex-col sm:flex-row items-center justify-between gap-4 relative z-20" style="border-radius: 0; border-bottom: 4px solid #1a0f0a;">
                         <div class="flex items-center gap-3 w-full sm:w-auto">
                             <h3 class="font-bold text-gray-100 flex items-center gap-2 text-shadow text-lg">
                                 <i data-lucide="library" class="w-5 h-5 text-cyan-400"></i> مكتبة الأقسام
