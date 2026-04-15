@@ -44,40 +44,44 @@
     <style>
         /* التعديل على السكرول ليصبح عريضاً وواضحاً ومميزاً */
         .custom-scrollbar::-webkit-scrollbar { 
-            width: 10px; 
-            height: 10px; 
+            width: 12px; 
+            height: 12px; 
         }
         .custom-scrollbar::-webkit-scrollbar-track { 
-            background: rgba(0, 0, 0, 0.3); 
+            background: #1a0f0a; 
             border-radius: 10px; 
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb { 
-            background: linear-gradient(180deg, #ec4899, #06b6d4); 
+            background: linear-gradient(180deg, #d4af37, #996515); 
             border-radius: 10px; 
-            border: 2px solid #1a1a1a; 
+            border: 2px solid #2b1810; 
+            box-shadow: inset 0 2px 2px rgba(255,255,255,0.4);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
-            background: linear-gradient(180deg, #db2777, #0891b2); 
+            background: linear-gradient(180deg, #f3e5ab, #d4af37); 
         }
 
         /* سكرول أزرار الإذاعات العلوية */
-        .radio-buttons-scroll::-webkit-scrollbar { height: 4px; }
-        .radio-buttons-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
-        .radio-buttons-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        .radio-buttons-scroll::-webkit-scrollbar-thumb:hover { background: #555; }
+        .radio-buttons-scroll::-webkit-scrollbar { height: 6px; }
+        .radio-buttons-scroll::-webkit-scrollbar-track { background: #1a0f0a; border-radius: 10px; box-shadow: inset 0 0 5px rgba(0,0,0,0.8); }
+        .radio-buttons-scroll::-webkit-scrollbar-thumb { background: linear-gradient(90deg, #d4af37, #996515); border-radius: 10px; }
+        .radio-buttons-scroll::-webkit-scrollbar-thumb:hover { background: linear-gradient(90deg, #f3e5ab, #d4af37); }
 
         .custom-range::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 14px;
-            width: 14px;
+            height: 18px;
+            width: 18px;
             border-radius: 50%;
-            background: #ec4899;
+            background: radial-gradient(circle at 30% 30%, #f3e5ab, #d4af37, #996515);
+            border: 2px solid #2b1810;
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.8), inset 0 2px 2px rgba(255,255,255,0.6);
             transition: transform 0.1s;
         }
         .custom-range::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
+            transform: scale(1.15);
+            background: radial-gradient(circle at 30% 30%, #ffffff, #f3e5ab, #d4af37);
         }
 
         @keyframes spin-slow { 100% { transform: rotate(360deg); } }
@@ -109,50 +113,93 @@
         /* ستايلات الراديو القديم (خشب، زجاج، أزرار نحاسية) */
         .wood-panel {
             background-color: #3e2723;
-            background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 2px, transparent 2px, transparent 4px), linear-gradient(to bottom, #5c3a21, #2c1810);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 15px 30px rgba(0,0,0,0.9);
-            border: 5px solid #1a0f0a;
+            background-image: 
+                repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 10px),
+                repeating-linear-gradient(45deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 2px, transparent 2px, transparent 6px), 
+                linear-gradient(to bottom, #4e342e, #3e2723, #21110b);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.9), inset 0 0 10px rgba(0,0,0,0.7), 0 20px 40px rgba(0,0,0,0.95);
+            border: 6px solid #1a0f0a;
+            border-radius: 16px;
+            position: relative;
+        }
+        .wood-panel::before {
+            content: '';
+            position: absolute;
+            top: 6px; left: 6px; right: 6px; bottom: 6px;
+            border: 2px solid rgba(255,255,255,0.05);
+            border-radius: 10px;
+            pointer-events: none;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.6);
+            z-index: 0;
         }
         .glass-hollow {
-            background: linear-gradient(135deg, rgba(10,5,0,0.9) 0%, rgba(30,15,5,0.95) 100%);
-            box-shadow: inset 0 8px 20px rgba(0,0,0,1), inset 0 1px 2px rgba(255,255,255,0.1), 0 2px 0 rgba(255,255,255,0.05);
+            background: linear-gradient(135deg, #1f140e 0%, #0a0502 100%);
+            box-shadow: inset 0 8px 25px rgba(0,0,0,1), inset 0 0 15px rgba(255, 160, 0, 0.15), inset 0 1px 3px rgba(255,255,255,0.15), 0 3px 0 rgba(255,255,255,0.08);
             position: relative;
             overflow: hidden;
-            border: 2px solid #0a0502;
+            border: 3px solid #080402;
+            border-radius: 8px;
+        }
+        .glass-hollow::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 2px, transparent 2px, transparent 4px);
+            pointer-events: none;
+            z-index: 1;
         }
         .glass-hollow::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; height: 45%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+            top: -20%; left: -10%; right: -10%; height: 60%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.15), transparent);
             pointer-events: none;
-            border-radius: inherit;
+            transform: rotate(-5deg);
+            border-radius: 50% 50% 100% 100%;
+            z-index: 2;
         }
         .vintage-btn {
-            background: linear-gradient(to bottom, #e5c058, #a67c00);
-            border: 2px solid #3e2723;
-            box-shadow: inset 0 2px 2px rgba(255,255,255,0.6), 0 4px 0 #5c430a, 0 6px 10px rgba(0,0,0,0.7);
-            color: #2c1810 !important;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.4);
-            transition: all 0.1s ease;
+            background: linear-gradient(to bottom, #f3e5ab, #d4af37, #996515);
+            border: 2px solid #2b1810;
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), inset 0 -2px 5px rgba(0,0,0,0.4), 0 4px 0 #4a3018, 0 8px 15px rgba(0,0,0,0.8);
+            color: #1a0f0a !important;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 6px;
         }
         .vintage-btn:active {
             transform: translateY(4px);
-            box-shadow: inset 0 2px 2px rgba(255,255,255,0.6), 0 0 0 #5c430a, 0 2px 4px rgba(0,0,0,0.7);
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.6), inset 0 -1px 2px rgba(0,0,0,0.4), 0 0 0 #4a3018, 0 2px 5px rgba(0,0,0,0.8);
+            background: linear-gradient(to bottom, #d4af37, #996515);
+        }
+        .vintage-btn:hover {
+            filter: brightness(1.1);
         }
         .vintage-shelf {
-            background: linear-gradient(to bottom, #4a2f1d, #2c1810);
-            border-bottom: 8px solid #1a0f0a;
-            border-top: 2px solid #734a2e;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.9);
-            padding: 12px 8px;
-            border-radius: 6px;
+            background: linear-gradient(to bottom, #5c3a21, #3e2723, #1a0f0a);
+            border-bottom: 10px solid #0f0805;
+            border-top: 2px solid #8c5a38;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.5), 0 15px 25px rgba(0,0,0,0.95);
+            padding: 16px 10px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .vintage-shelf::after {
+            content: '';
+            position: absolute;
+            bottom: -10px; left: 5%; right: 5%; height: 10px;
+            background: linear-gradient(to right, transparent, rgba(0,0,0,0.8), transparent);
+            filter: blur(4px);
         }
         body {
-            background-color: #1a0f0a;
-            background-image: radial-gradient(circle at center, #2c1810 0%, #0a0502 100%);
-            font-family: 'Georgia', serif;
+            background-color: #0d0704;
+            background-image: 
+                radial-gradient(circle at 50% 30%, #3e2415 0%, #0a0502 80%),
+                repeating-linear-gradient(45deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 10px);
+            font-family: 'Georgia', 'Times New Roman', serif;
         }
     </style>
 </head>
@@ -211,7 +258,7 @@
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h1 class="text-2xl font-bold text-amber-400 text-shadow" style="font-family: 'Courier New', Courier, monospace;">
+                        <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-[#f3e5ab] via-[#d4af37] to-[#996515] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style="font-family: 'Georgia', serif; letter-spacing: 1px;">
                             راديو خالد
                         </h1>
                         <span id="admin-badge" class="hidden bg-pink-500/20 text-pink-400 text-xs px-2 py-0.5 rounded border border-pink-500/30 flex items-center gap-1 cursor-pointer hover:bg-pink-500/30 transition-colors" onclick="lockAdmin()" title="إغلاق غرفة التحكم">
@@ -265,10 +312,11 @@
             <!-- القسم الأيمن: المشغل والتحكم -->
             <div class="lg:col-span-5 space-y-6">
                 <div class="wood-panel rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-20 mix-blend-multiply pointer-events-none" style="background-image: radial-gradient(#000 2px, transparent 2px); background-size: 8px 8px; z-index: 0;"></div>
                     
                     <div id="playing-glow" class="hidden">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-pink-500/20 blur-[50px] rounded-full pointer-events-none"></div>
-                        <div class="absolute bottom-0 left-0 w-32 h-32 bg-cyan-500/20 blur-[50px] rounded-full pointer-events-none"></div>
+                        <div class="absolute top-0 right-0 w-48 h-48 bg-amber-500/20 blur-[60px] rounded-full pointer-events-none"></div>
+                        <div class="absolute bottom-0 left-0 w-48 h-48 bg-orange-600/20 blur-[60px] rounded-full pointer-events-none"></div>
                     </div>
                     
                     <div class="relative z-10 flex flex-col items-center text-center space-y-6">
@@ -302,8 +350,8 @@
                                 <span id="duration-txt">0:00</span>
                             </div>
                             <div id="progress-container" class="w-full h-4 bg-[#1a0f0a] border border-[#3e2723] rounded-full overflow-hidden cursor-pointer relative group flex items-center shadow-inner">
-                                <div id="progress-bar" class="h-2.5 bg-gradient-to-r from-amber-600 to-amber-400 transition-none ease-linear relative w-full rounded-full" style="width: 0%">
-                                    <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity translate-x-1/2 cursor-grab active:cursor-grabbing pointer-events-none"></div>
+                                <div id="progress-bar" class="h-2.5 bg-gradient-to-r from-orange-800 via-amber-600 to-yellow-500 transition-none ease-linear relative w-full rounded-full shadow-[0_0_10px_rgba(245,158,11,0.6)]" style="width: 0%">
+                                    <div class="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 bg-gradient-to-b from-[#f3e5ab] to-[#d4af37] border border-[#4a3018] rounded-full shadow-[0_2px_5px_rgba(0,0,0,0.8)] opacity-0 group-hover:opacity-100 transition-opacity translate-x-1/2 cursor-grab active:cursor-grabbing pointer-events-none"></div>
                                 </div>
                             </div>
 
