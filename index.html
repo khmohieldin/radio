@@ -30,9 +30,19 @@
     <script>
         if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('تم تفعيل خدمة التطبيق (PWA) بنجاح', reg.scope))
-                    .catch(err => console.warn('تنبيه: ملف sw.js غير جاهز أو يوجد خطأ في المسار:', err));
+                navigator.serviceWorker.register('./sw.js').then(reg => {
+                    console.log('PWA Ready');
+                    // تفقد التحديثات بشكل دوري وإجبار المتصفح على النسخة الجديدة
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        installingWorker.onstatechange = () => {
+                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // إذا وجد نسخة جديدة، يفرغ الكاش ويحدث الصفحة تلقائياً
+                                window.location.reload();
+                            }
+                        };
+                    };
+                }).catch(err => console.warn('SW Error:', err));
             });
         }
     </script>
@@ -945,8 +955,9 @@
             localStorage.setItem('lastTrackIndex', -2);
             localStorage.removeItem('lastPlayingGroupId');
 
-            // رابط محدث وأكثر استقراراً لإذاعة القرآن الكريم
-            window.safeChangeTrack('https://n02.radiojar.com/8s5u5tpdtwzuv?rj-ttl=5&rj-tok=AAABj'); 
+            // إضافة nocache لضمان تخطي أي ذاكرة تخزين قديمة للمتصفح
+            const quranUrl = 'https://n02.radiojar.com/8s5u5tpdtwzuv?rj-ttl=5&rj-tok=AAABj&v=' + Date.now();
+            window.safeChangeTrack(quranUrl); 
             pendingRestoreTime = false;
             window.initAudioBooster();
             
