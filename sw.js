@@ -1,4 +1,4 @@
-const CACHE_NAME = 'radio-khaled-v2'; // قمنا بتغيير الإصدار هنا
+const CACHE_NAME = 'radio-khaled-v3'; // تغيير الرقم لـ 3
 const assetsToCache = [ './', './index.html', './manifest.json' ];
 
 self.addEventListener('install', (event) => {
