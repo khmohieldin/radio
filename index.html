@@ -1698,36 +1698,48 @@
             let lastAddedIndex = -1;
 
             let mostPlayedTrackId = null;
-            let maxPlays = 0;
-            for (const [id, count] of Object.entries(globalTrackPlays)) {
-                if (count > maxPlays) {
-                    maxPlays = count;
-                    mostPlayedTrackId = id;
+let maxPlays = 0;
+for (const [id, count] of Object.entries(globalTrackPlays)) {
+if (count > maxPlays) {
+maxPlays = count;
+mostPlayedTrackId = id;
+}
+}
+
+        let mostPlayedTrack = null;
+        let mostPlayedGroup = null;
+        let mostPlayedIndex = -1;
+
+        for (let g of groups) {
+            for (let i = 0; i < g.tracks.length; i++) {
+                let t = g.tracks[i];
+                
+                if (t.addedAt && t.addedAt > latestTime) {
+                    latestTime = t.addedAt;
+                    lastAddedTrack = t;
+                    lastAddedGroup = g.id;
+                    lastAddedIndex = i;
+                }
+                
+                if (mostPlayedTrackId && t.id === mostPlayedTrackId) {
+                    mostPlayedTrack = t;
+                    mostPlayedGroup = g.id;
+                    mostPlayedIndex = i;
                 }
             }
+        }
 
-            let mostPlayedTrack = null;
-            let mostPlayedGroup = null;
-            let mostPlayedIndex = -1;
-
+        if (!mostPlayedTrack && groups.length > 0) {
             for (let g of groups) {
-                for (let i = 0; i < g.tracks.length; i++) {
-                    let t = g.tracks[i];
-                    
-                    if (t.addedAt && t.addedAt > latestTime) {
-                        latestTime = t.addedAt;
-                        lastAddedTrack = t;
-                        lastAddedGroup = g.id;
-                        lastAddedIndex = i;
-                    }
-                    
-                    if (mostPlayedTrackId && t.id === mostPlayedTrackId) {
-                        mostPlayedTrack = t;
-                        mostPlayedGroup = g.id;
-                        mostPlayedIndex = i;
-                    }
+                if (g.tracks && g.tracks.length > 0 && !g.isLocal) {
+                    mostPlayedTrack = g.tracks[0];
+                    mostPlayedGroup = g.id;
+                    mostPlayedIndex = 0;
+                    maxPlays = 0;
+                    break;
                 }
             }
+        }
 
             if (latestTime === 0) {
                 const activeGroup = window.getViewingGroup() || groups[0];
