@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -240,9 +238,9 @@
 
     <!-- قائمة القرآن الكريم المنسدلة -->
     <div id="quran-dropdown-menu" class="hidden fixed z-[100] w-[180px] bg-[#1a1a1a] border border-[#333] rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] overflow-hidden flex-col transition-all duration-200 opacity-0 transform scale-95 origin-top-right">
-        <button onclick="playQuranRadio(); closeQuranMenu();" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-emerald-400 transition-colors text-right w-full font-medium">
-            <i data-lucide="radio" class="w-4 h-4"></i> إذاعة القرآن الكريم
-        </button>
+        <button onclick="window.location.href='https://khmohieldin.github.io/qorankarem/'; closeQuranMenu();" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-emerald-400 transition-colors text-right w-full font-medium">
+<i data-lucide="radio" class="w-4 h-4"></i> إذاعة القرآن الكريم
+</button>
         <button onclick="window.location.href='https://khmohieldin.github.io/qoran/';" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-[#2a2a2a] hover:text-amber-400 transition-colors text-right w-full border-t border-[#333] font-medium">
             <i data-lucide="headphones" class="w-4 h-4"></i> تلاوات نادرة
         </button>
@@ -545,10 +543,10 @@
                     <a href="https://wa.me/201018282460" target="_blank" class="flex items-center gap-2 text-gray-500 hover:text-green-500 transition-colors" title="واتساب">
                         <i data-lucide="message-circle" class="w-4 h-4"></i><span>واتساب</span>
                     </a>
-                                                                                <a href="https://www.facebook.com/khaledmohyalden" target="_blank" class="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition-colors" title="فيسبوك">
-                        <i data-lucide="facebook" class="w-4 h-4"></i>
-                        <span>فيسبوك</span>
-                    </a>
+                                                                                <a href="https://www.facebook.com/khaledmohyalden" target="_blank" class="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition-colors" title="فيسبوك">
+                        <i data-lucide="facebook" class="w-4 h-4"></i>
+                        <span>فيسبوك</span>
+                    </a>
                 </div>
             </div>
         </footer>
@@ -958,8 +956,8 @@
             localStorage.setItem('lastTrackIndex', -2);
             localStorage.removeItem('lastPlayingGroupId');
 
-                        const quranUrl = 'https://n03.radiojar.com/8s5u5tpdtwzuv?_t=' + new Date().getTime();
-            window.safeChangeTrack(quranUrl);  
+                        const quranUrl = 'https://n03.radiojar.com/8s5u5tpdtwzuv?_t=' + new Date().getTime();
+            window.safeChangeTrack(quranUrl);  
             pendingRestoreTime = false;
             window.initAudioBooster();
             
@@ -973,7 +971,7 @@
             localStorage.setItem('lastTrackIndex', -4);
             localStorage.removeItem('lastPlayingGroupId');
 
-                        window.safeChangeTrack('https://stream.zeno.fm/egynebf171zuv?_t=' + new Date().getTime());  
+                        window.safeChangeTrack('https://stream.zeno.fm/egynebf171zuv?_t=' + new Date().getTime());  
             pendingRestoreTime = false;
             window.initAudioBooster();
             
@@ -987,7 +985,7 @@
             localStorage.setItem('lastTrackIndex', -5);
             localStorage.removeItem('lastPlayingGroupId');
 
-                        window.safeChangeTrack('https://radio.skynewsarabia.com/stream/radio/skynewsarabia?_t=' + new Date().getTime());
+                        window.safeChangeTrack('https://radio.skynewsarabia.com/stream/radio/skynewsarabia?_t=' + new Date().getTime());
             pendingRestoreTime = false;
             window.initAudioBooster();
 
@@ -1001,7 +999,7 @@
             localStorage.setItem('lastTrackIndex', -6);
             localStorage.removeItem('lastPlayingGroupId');
 
-                        window.safeChangeTrack('https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3?_t=' + new Date().getTime());
+                        window.safeChangeTrack('https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3?_t=' + new Date().getTime());
             pendingRestoreTime = false;
             window.initAudioBooster();
 
