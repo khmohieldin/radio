@@ -544,9 +544,9 @@
                         <i data-lucide="message-circle" class="w-4 h-4"></i><span>واتساب</span>
                     </a>
                                                                                 <a href="https://www.facebook.com/khaledmohyalden" target="_blank" class="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition-colors" title="فيسبوك">
-                        <i data-lucide="facebook" class="w-4 h-4"></i>
-                        <span>فيسبوك</span>
-                    </a>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+<span>فيسبوك</span>
+</a>
                 </div>
             </div>
         </footer>
@@ -1494,26 +1494,35 @@
         };
 
         function setupMediaSession() {
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.setActionHandler('play', () => {
-                    if (audio && audio.paused) {
-                        window.initAudioBooster();
-                        window.safePlayAudio();
-                    }
-                });
-                navigator.mediaSession.setActionHandler('pause', () => {
-                    if (audio && !audio.paused) {
-                        audio.pause();
-                    }
-                });
-                navigator.mediaSession.setActionHandler('previoustrack', () => {
-                    if (btnPrev && !btnPrev.disabled) btnPrev.click();
-                });
-                navigator.mediaSession.setActionHandler('nexttrack', () => {
-                    if (btnNext && !btnNext.disabled) btnNext.click();
-                });
-            }
-        }
+if ('mediaSession' in navigator) {
+navigator.mediaSession.setActionHandler('play', () => {
+if (audio && audio.paused) {
+window.initAudioBooster();
+window.safePlayAudio();
+}
+});
+navigator.mediaSession.setActionHandler('pause', () => {
+if (audio && !audio.paused) {
+audio.pause();
+}
+});
+navigator.mediaSession.setActionHandler('previoustrack', () => {
+if (btnPrev && !btnPrev.disabled) btnPrev.click();
+});
+navigator.mediaSession.setActionHandler('nexttrack', () => {
+if (btnNext && !btnNext.disabled) btnNext.click();
+});
+try {
+navigator.mediaSession.setActionHandler('seekto', (details) => {
+if (audio && details.fastSeek && ('fastSeek' in audio)) {
+audio.fastSeek(details.seekTime);
+} else if (audio) {
+audio.currentTime = details.seekTime;
+}
+});
+} catch(e) {}
+}
+}
         setupMediaSession();
 
         window.applyAdminMode = function() {
@@ -2179,71 +2188,78 @@ mostPlayedTrackId = id;
         let audioCtx, gainNode, sourceNode, compressorNode, analyserNode;
 
         window.initAudioBooster = function() {
-            if (!audioCtx) {
-                try {
-                    const AudioContext = window.AudioContext || window.webkitAudioContext;
-                    audioCtx = new AudioContext();
-                    if(audio) sourceNode = audioCtx.createMediaElementSource(audio);
-                    
-                    compressorNode = audioCtx.createDynamicsCompressor();
-                    compressorNode.threshold.setValueAtTime(-24, audioCtx.currentTime);
-                    compressorNode.knee.setValueAtTime(30, audioCtx.currentTime);
-                    compressorNode.ratio.setValueAtTime(12, audioCtx.currentTime);
-                    compressorNode.attack.setValueAtTime(0.003, audioCtx.currentTime);
-                    compressorNode.release.setValueAtTime(0.25, audioCtx.currentTime);
+if (!audioCtx) {
+try {
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+audioCtx = new AudioContext();
 
-                    gainNode = audioCtx.createGain();
-                    
-                                        analyserNode = audioCtx.createAnalyser();
-                    analyserNode.fftSize = 512; 
+                if (!isMobile && audio) {
+                    sourceNode = audioCtx.createMediaElementSource(audio);
+                }
+                
+                compressorNode = audioCtx.createDynamicsCompressor();
+                compressorNode.threshold.setValueAtTime(-24, audioCtx.currentTime);
+                compressorNode.knee.setValueAtTime(30, audioCtx.currentTime);
+                compressorNode.ratio.setValueAtTime(12, audioCtx.currentTime);
+                compressorNode.attack.setValueAtTime(0.003, audioCtx.currentTime);
+                compressorNode.release.setValueAtTime(0.25, audioCtx.currentTime);
 
-                    if(sourceNode) {
-                        try {
-                            sourceNode.connect(compressorNode);
-                            compressorNode.connect(gainNode);
-                            gainNode.connect(analyserNode);
-                            analyserNode.connect(audioCtx.destination);
-                        } catch(e) {
-                            console.warn("تم تعطيل محلل الطيف مؤقتاً بسبب قيود CORS على هذا الرابط.");
-                        }
+                gainNode = audioCtx.createGain();
+                
+                analyserNode = audioCtx.createAnalyser();
+                analyserNode.fftSize = 512; 
+
+                if(sourceNode) {
+                    try {
+                        sourceNode.connect(compressorNode);
+                        compressorNode.connect(gainNode);
+                        gainNode.connect(analyserNode);
+                        analyserNode.connect(audioCtx.destination);
+                    } catch(e) {
+                        console.warn("تم تعطيل محلل الطيف مؤقتاً بسبب قيود CORS على هذا الرابط.");
                     }
-
-                    gainNode.gain.value = volume;
-                } catch (e) {
-                    console.error("لم نتمكن من تفعيل معالجة الصوت:", e);
                 }
-            }
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
 
-            if (!animationId && visualizerCanvas && canvasCtx) {
-                drawVisualizer();
+                gainNode.gain.value = volume;
+            } catch (e) {
+                console.error("لم نتمكن من تفعيل معالجة الصوت:", e);
             }
-        };
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
 
-        let lastDrawTime = performance.now();
-        function drawVisualizer(timestamp = performance.now()) {
-            if (!analyserNode || !canvasCtx || !visualizerCanvas) return;
-            animationId = requestAnimationFrame(drawVisualizer);
+        if (!animationId && visualizerCanvas && canvasCtx) {
+            drawVisualizer();
+        }
+    };
 
-            if (timestamp - lastDrawTime < 33) return;
-            lastDrawTime = timestamp;
-            
-                        const bufferLength = analyserNode.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
+    let lastDrawTime = performance.now();
+    function drawVisualizer(timestamp = performance.now()) {
+        if (!analyserNode || !canvasCtx || !visualizerCanvas) return;
+        animationId = requestAnimationFrame(drawVisualizer);
+
+        if (timestamp - lastDrawTime < 33) return;
+        lastDrawTime = timestamp;
+        
+        const bufferLength = analyserNode.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        
+        if (sourceNode) {
             analyserNode.getByteFrequencyData(dataArray);
+        }
 
-            let isSilent = true;
-            for(let i=0; i<dataArray.length; i++) { if(dataArray[i] > 0) { isSilent = false; break; } }
-           
-            if (isSilent && isPlaying && currentIndex < -1) {
-                for(let i=0; i<dataArray.length; i++) {
-                    dataArray[i] = Math.random() * 80 + 20;
-                }
+        let isSilent = true;
+        for(let i=0; i<dataArray.length; i++) { if(dataArray[i] > 0) { isSilent = false; break; } }
+        
+        if (isSilent && isPlaying) {
+            for(let i=0; i<dataArray.length; i++) {
+                dataArray[i] = Math.random() * 80 + 20;
             }
+        }
 
-            canvasCtx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+        canvasCtx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
 
             if (!isPlaying && audio && audio.paused) {
                 canvasCtx.fillStyle = 'rgba(6, 182, 212, 0.3)';
@@ -3124,17 +3140,20 @@ mostPlayedTrackId = id;
             }
             
             if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: mediaTitle,
-                    artist: mediaArtist,
-                    album: 'راديو خالد',
-                    artwork: [
-                        { src: mediaArtwork, sizes: '512x512', type: 'image/png' },
-                        { src: mediaArtwork, sizes: '256x256', type: 'image/png' },
-                        { src: mediaArtwork, sizes: '128x128', type: 'image/png' }
-                    ]
-                });
-            }
+navigator.mediaSession.metadata = new MediaMetadata({
+title: mediaTitle,
+artist: mediaArtist,
+album: 'راديو خالد',
+artwork: [
+{ src: mediaArtwork, sizes: '512x512', type: 'image/png' },
+{ src: mediaArtwork, sizes: '256x256', type: 'image/png' },
+{ src: mediaArtwork, sizes: '128x128', type: 'image/png' }
+]
+});
+try {
+navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+} catch(e) {}
+}
             
             window.renderPlaylist();
             if(trackDetailsContainer) lucide.createIcons({ root: trackDetailsContainer });
@@ -3617,14 +3636,24 @@ mostPlayedTrackId = id;
                     if(progressBar) progressBar.style.width = duration ? `${(current / duration) * 100}%` : '0%';
                 }
                 
-                if (currentIndex === -3) return; 
+                if (currentIndex === -3) return;
 
-                const currentGroup = window.getPlayingGroup();
-                if (currentGroup && currentGroup.tracks[currentIndex] && duration > 0) {
-                    localStorage.setItem('trackProgress_' + currentGroup.tracks[currentIndex].id, current);
+            const currentGroup = window.getPlayingGroup();
+            if (currentGroup && currentGroup.tracks[currentIndex] && duration > 0) {
+                localStorage.setItem('trackProgress_' + currentGroup.tracks[currentIndex].id, current);
+            }
+            
+            try {
+                if ('mediaSession' in navigator && duration > 0 && !isNaN(duration) && isFinite(duration) && isFinite(current)) {
+                    navigator.mediaSession.setPositionState({
+                        duration: duration,
+                        playbackRate: audio.playbackRate || 1,
+                        position: current
+                    });
                 }
-            });
-        }
+            } catch(e) {}
+        });
+    }
 
         window.updateProgressFromEvent = function(e) {
             if (!audio || !audio.duration || !progressContainer || currentIndex === -2 || currentIndex === -4 || currentIndex === -5 || currentIndex === -6) return;
