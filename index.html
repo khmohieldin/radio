@@ -247,7 +247,7 @@
     </div>
 
     <!-- أيقونة التثبيت العائمة -->
-    <div onclick="installApp()" class="fixed bottom-6 left-4 sm:left-6 z-40 flex flex-col items-center gap-1.5 cursor-pointer group install-btn-container" title="تثبيت التطبيق">
+    <div onclick="window.open('https://khmohieldin.github.io/dawnlandradio/', '_blank')" class="fixed bottom-6 left-4 sm:left-6 z-40 flex flex-col items-center gap-1.5 cursor-pointer group install-btn-container" title="تنزيل التطبيق">
         <div class="relative">
             <img src="https://i.ibb.co/sp6xBm7K/Picsart-26-03-30-18-16-08-102.png" alt="تطبيق راديو خالد" class="w-14 h-14 sm:w-16 sm:h-16 rounded-[1.25rem] shadow-[0_8px_20px_rgba(0,0,0,0.5)] group-hover:scale-105 group-active:scale-95 transition-all duration-300 border border-[#333] object-cover">
             <div class="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-cyan-500 to-pink-500 text-white rounded-full p-1 shadow-lg animate-bounce border border-[#111]">
@@ -519,11 +519,8 @@
         </div>
 
         <footer class="mt-12 pt-6 border-t border-gray-800 flex flex-col gap-8 pb-8">
-            <div class="flex flex-wrap items-center justify-center gap-4">
-                 <button onclick="installApp()" class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white rounded-xl shadow-lg shadow-pink-500/20 transition-all font-bold install-btn-container">
-                     <img src="https://i.ibb.co/sp6xBm7K/Picsart-26-03-30-18-16-08-102.png" class="w-6 h-6 rounded-md" alt="تطبيق راديو خالد"> تنزيل التطبيق
-                 </button>
-                 <button onclick="addToFavorites()" class="flex items-center gap-2 px-5 py-2.5 bg-[#222] hover:bg-[#333] border border-[#444] text-yellow-400 rounded-xl transition-all font-medium shadow-md">
+<div class="flex flex-wrap items-center justify-center gap-4">
+<button onclick="addToFavorites()" class="flex items-center gap-2 px-5 py-2.5 bg-[#222] hover:bg-[#333] border border-[#444] text-yellow-400 rounded-xl transition-all font-medium shadow-md">
                      <i data-lucide="star" class="w-4 h-4"></i> المفضلة / الرئيسية
                  </button>
                  <button onclick="openContactModal()" class="flex items-center gap-2 px-5 py-2.5 bg-[#222] hover:bg-[#333] border border-[#444] text-cyan-400 rounded-xl transition-all font-medium shadow-md">
@@ -2010,29 +2007,6 @@ mostPlayedTrackId = id;
 
         window.addToFavorites = () => {
             window.openAlertModal('المفضلة / الرئيسية', 'لإضافة الراديو للمفضلة أو جعله صفحتك الرئيسية:<br><br><b>للكمبيوتر:</b> اضغط على لوحة المفاتيح <span class="bg-[#333] px-2 py-1 rounded text-cyan-400 font-mono mx-1">Ctrl + D</span><br><br><b>للهاتف:</b> اضغط على أيقونة خيارات المتصفح (الثلاث نقاط) ثم علامة النجمة (⭐) أو اختر "إضافة للمفضلة".');
-        };
-
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
-
-        window.installApp = async () => {
-            if (window.matchMedia('(display-mode: standalone)').matches) {
-                window.openAlertModal('تنبيه', 'التطبيق مثبت بالفعل على هاتفك! ابحث عن أيقونة "راديو خالد" في قائمة تطبيقاتك.');
-                return;
-            }
-            
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    deferredPrompt = null;
-                }
-            } else {
-                window.openAlertModal('تنزيل التطبيق', '💡 <b>ملاحظة هامة جداً:</b><br>إذا فتحت الرابط من تطبيق مثل (واتساب أو فيسبوك)، يرجى الضغط على الثلاث نقاط بالأعلى واختيار <b>(الفتح في متصفح كروم - Open in Chrome)</b> أولاً لتتمكن من التثبيت.<br><br><b>للتثبيت اليدوي:</b><br>1. اضغط على خيارات متصفح كروم (الثلاث نقاط).<br>2. اختر <b>"إضافة إلى الشاشة الرئيسية"</b> (Add to Home Screen) أو <b>"تثبيت التطبيق"</b> (Install App).<br>3. ستظهر الأيقونة بين برامجك فوراً!');
-            }
         };
 
         window.openContactModal = function() {
